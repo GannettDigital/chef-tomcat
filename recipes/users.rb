@@ -4,7 +4,7 @@
 #
 # Author:: Jamie Winsor (<jamie@vialstudios.com>)
 #
-# Copyright 2010-2012, Opscode, Inc.
+# Copyright 2010-2015, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,14 +19,14 @@
 # limitations under the License.
 #
 
-template "#{node["tomcat"]["config_dir"]}/tomcat-users.xml" do
+template "#{node['tomcat']['config_dir']}/tomcat-users.xml" do
   source 'tomcat-users.xml.erb'
   owner 'root'
   group 'root'
   mode '0644'
   variables(
-    :users => TomcatCookbook.users,
-    :roles => TomcatCookbook.roles,
+    users: TomcatCookbook.users,
+    roles: TomcatCookbook.roles
   )
-  notifies :restart, 'service[tomcat]'
+  notifies :restart, "service[#{node['tomcat']['base_instance']}]"
 end
