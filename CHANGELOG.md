@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the tomcat cookbook.
 
+## 2.4.1 (2017-03-31)
+
+- Fix HTTPS checksum fetching.
+- Add tarball_validate_ssl parameter to tomcat_install.
+
 ## 2.4.0 (2017-03-24)
 
 - Updated chef_version in the metadata to not fail metadata parsing on older chef clients
