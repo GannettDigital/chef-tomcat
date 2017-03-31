@@ -1,16 +1,36 @@
+#
+# Cookbook:: tomcat
+# Resource:: install
+#
+# Copyright:: 2016-2017, Chef Software, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 property :instance_name, String, name_property: true
 property :version, String, default: '8.0.36'
 property :install_path, String, default: lazy { |r| "/opt/tomcat_#{r.instance_name}_#{r.version.tr('.', '_')}/" }
 property :tarball_base_path, String, default: 'http://archive.apache.org/dist/tomcat/'
 property :checksum_base_path, String, default: 'http://archive.apache.org/dist/tomcat/'
 property :sha1_base_path, String # this is the legacy name for this attribute
-property :exclude_docs, kind_of: [TrueClass, FalseClass], default: true
-property :exclude_examples, kind_of: [TrueClass, FalseClass], default: true
-property :exclude_manager, kind_of: [TrueClass, FalseClass], default: false
-property :exclude_hostmanager, kind_of: [TrueClass, FalseClass], default: false
+property :exclude_docs, [true, false], default: true
+property :exclude_examples, [true, false], default: true
+property :exclude_manager, [true, false], default: false
+property :exclude_hostmanager, [true, false], default: false
 property :tarball_uri, String
-property :tomcat_user, kind_of: String, default: lazy { |r| "tomcat_#{r.instance_name}" }
-property :tomcat_group, kind_of: String, default: lazy { |r| "tomcat_#{r.instance_name}" }
+property :tarball_validate_ssl, [true, false], default: true
+property :tomcat_user, String, default: lazy { |r| "tomcat_#{r.instance_name}" }
+property :tomcat_group, String, default: lazy { |r| "tomcat_#{r.instance_name}" }
 
 action_class do
   # break apart the version string to find the major version
@@ -31,10 +51,9 @@ action_class do
 
   # ensure the version is X.Y.Z format
   def validate_version
-    unless new_resource.version =~ /\d+.\d+.\d+/
-      Chef::Log.fatal("The version must be in X.Y.Z format. Passed value: #{new_resource.version}")
-      raise
-    end
+    return if new_resource.version =~ /\d+.\d+.\d+/
+    Chef::Log.fatal("The version must be in X.Y.Z format. Passed value: #{new_resource.version}")
+    raise
   end
 
   # fetch the md5 checksum from the mirrors
@@ -48,12 +67,11 @@ action_class do
             URI("#{new_resource.tarball_uri}.md5")
           end
     request = Net::HTTP.new(uri.host, uri.port)
-    response = request.get(uri)
     if uri.to_s.start_with?('https')
       request.use_ssl = true
-      request.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      request.verify_mode = OpenSSL::SSL::VERIFY_NONE unless new_resource.tarball_validate_ssl
     end
-
+    response = request.get(uri)
     if response.code != '200'
       Chef::Log.fatal("Fetching the Tomcat tarball checksum at #{uri} resulted in an error #{response.code}")
       raise

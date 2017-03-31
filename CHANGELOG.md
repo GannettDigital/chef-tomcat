@@ -2,6 +2,28 @@
 
 This file is used to list changes made in each version of the tomcat cookbook.
 
+## 2.4.1 (2017-03-31)
+
+- Fix HTTPS checksum fetching.
+- Add tarball_validate_ssl parameter to tomcat_install.
+
+## 2.4.0 (2017-03-24)
+
+- Updated chef_version in the metadata to not fail metadata parsing on older chef clients
+- Switch to Delivery local for testing from Rake
+- Rename the Kitchen Dokken config and update the platforms we test on / config of those platforms
+- Simplify how we wire up the resources so we no longer have to specify the underlying init systems of each OS, but instead let chef determine when we're on a systemd vs. upstart vs sys-v system
+- Remvove DNF compat recipe in Test Kitchen and the need for the yum cookbook
+- Remove sensitive properties that caused deprecation warnings. Sensitive can be set on any resource and defining it in the resource is not necessary
+- Add copyright / license headers to the resources
+
+## 2.3.4 (2016-11-28)
+- Set tomcat_group in service_sysv_init.rb, for issue 275
+
+## 2.3.3 (2016-10-24)
+- Depend on the latest compat_resource
+- Remove a few LWRP-isms that were pointed out
+
 ## 2.3.2 (2016-08-24)
 
 - Use /bin/false as the shell for the service user
