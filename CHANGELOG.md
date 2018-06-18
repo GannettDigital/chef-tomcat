@@ -2,6 +2,24 @@
 
 This file is used to list changes made in each version of the tomcat cookbook.
 
+## 3.0.0 (2017-10-27)
+
+- Add ability to set the tomcat user's shell
+- Document user properties
+- Install the latest tomcat 8 release 8.0.47
+- Require Chef 12.7+ and stop using compat_resource cookbook
+- Resolve Chef 14 deprecation warnings
+- Update testing config with dokken-images to simplify the config
+
+## 2.5.2 (2017-06-28)
+
+- Test on multiple versions of chef
+- Fix double catalina_base env vars being included if you provided you own catalina_base
+
+## 2.5.1 (2017-05-30)
+
+- Remove class_eval usage to prevent failures
+
 ## 2.5.0 (2017-05-02)
 
 - Move the action_class after the actions to workaround a 12.5/12.6 bug

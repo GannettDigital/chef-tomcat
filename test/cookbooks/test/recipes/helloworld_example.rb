@@ -9,17 +9,17 @@ group 'cool_group' do
   action :create
 end
 
-# Install Tomcat 8.0.43 to the default location
+# Install Tomcat 8.0.47 to the default location
 tomcat_install 'helloworld' do
-  tarball_uri 'http://archive.apache.org/dist/tomcat/tomcat-8/v8.0.43/bin/apache-tomcat-8.0.43.tar.gz'
+  tarball_uri 'http://archive.apache.org/dist/tomcat/tomcat-8/v8.0.47/bin/apache-tomcat-8.0.47.tar.gz'
   tomcat_user 'cool_user'
   tomcat_group 'cool_group'
 end
 
-# Install Tomcat 8.0.43 to the default location mode 0755
+# Install Tomcat 8.0.47 to the default location mode 0755
 tomcat_install 'dirworld' do
   dir_mode '0755'
-  tarball_uri 'http://archive.apache.org/dist/tomcat/tomcat-8/v8.0.43/bin/apache-tomcat-8.0.43.tar.gz'
+  tarball_uri 'http://archive.apache.org/dist/tomcat/tomcat-8/v8.0.47/bin/apache-tomcat-8.0.47.tar.gz'
   tomcat_user 'cool_user'
   tomcat_group 'cool_group'
 end
@@ -43,7 +43,7 @@ end
 # start the helloworld tomcat service using a non-standard pic location
 tomcat_service 'helloworld' do
   action [:start, :enable]
-  env_vars [{ 'CATALINA_PID' => '/opt/tomcat_helloworld/bin/non_standard_location.pid' }, { 'SOMETHING' => 'some_value' }]
+  env_vars [{ 'CATALINA_BASE' => '/opt/tomcat_helloworld/' }, { 'CATALINA_PID' => '/opt/tomcat_helloworld/bin/non_standard_location.pid' }, { 'SOMETHING' => 'some_value' }]
   sensitive true
   tomcat_user 'cool_user'
   tomcat_group 'cool_group'
