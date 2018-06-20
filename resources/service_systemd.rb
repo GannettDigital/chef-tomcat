@@ -79,11 +79,11 @@ action :enable do
   end
 end
 
-action_class.class_eval do
+action_class do
   include ::TomcatCookbook::ServiceHelpers
 
   def create_init
-    template "/etc/systemd/system/tomcat_#{instance_name}.service" do
+    template "/etc/systemd/system/tomcat_#{new_resource.instance_name}.service" do
       source 'init_systemd.erb'
       sensitive new_resource.sensitive
       variables(

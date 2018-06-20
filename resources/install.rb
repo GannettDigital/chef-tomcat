@@ -18,7 +18,7 @@
 #
 
 property :instance_name, String, name_property: true
-property :version, String, default: '8.0.43'
+property :version, String, default: '8.0.47'
 property :install_path, String, default: lazy { |r| "/opt/tomcat_#{r.instance_name}_#{r.version.tr('.', '_')}/" }
 property :tarball_base_uri, String, default: 'http://archive.apache.org/dist/tomcat/'
 property :checksum_base_uri, String, default: 'http://archive.apache.org/dist/tomcat/'
@@ -33,6 +33,7 @@ property :tarball_path, String, default: lazy { |r| "#{Chef::Config['file_cache_
 property :tarball_validate_ssl, [true, false], default: true
 property :tomcat_user, String, default: lazy { |r| "tomcat_#{r.instance_name}" }
 property :tomcat_group, String, default: lazy { |r| "tomcat_#{r.instance_name}" }
+property :tomcat_user_shell, String, default: '/bin/false'
 
 action :install do
   validate_version
@@ -50,7 +51,7 @@ action :install do
 
   user new_resource.tomcat_user do
     gid new_resource.tomcat_group
-    shell '/bin/false'
+    shell new_resource.tomcat_user_shell
     system true
     action :create
   end
@@ -90,7 +91,7 @@ action :install do
   end
 end
 
-action_class.class_eval do
+action_class do
   # break apart the version string to find the major version
   def major_version
     @major_version ||= new_resource.version.split('.')[0]
