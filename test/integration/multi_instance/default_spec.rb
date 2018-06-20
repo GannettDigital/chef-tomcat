@@ -1,27 +1,35 @@
 puts 'Sleeping to make sure the services are started'
 sleep 10
 
-describe file('/opt/tomcat_helloworld_8_0_43') do
+describe file('/opt/tomcat_helloworld_8_0_47') do
   it { should be_directory }
   it { should be_owned_by 'cool_user' }
   its('group') { should eq 'cool_group' }
   its('mode') { should cmp '0750' }
 end
 
-describe file('/opt/tomcat_dirworld_8_0_43') do
+# make sure we get our override env value and not both
+if file('/etc/init/tomcat_helloworld.conf').exist?
+  describe file('/etc/init/tomcat_helloworld.conf') do
+    its('content') { should match(%r{env CATALINA_BASE="/opt/tomcat_helloworld/"}) }
+    its('content') { should_not match(%r{env CATALINA_BASE="/opt/tomcat_helloworld"}) }
+  end
+end
+
+describe file('/opt/tomcat_dirworld_8_0_47') do
   it { should be_directory }
   it { should be_owned_by 'cool_user' }
   its('group') { should eq 'cool_group' }
   its('mode') { should cmp '0755' }
 end
 
-describe file('/opt/tomcat_helloworld_8_0_43/LICENSE') do
+describe file('/opt/tomcat_helloworld_8_0_47/LICENSE') do
   it { should be_file }
   it { should be_owned_by 'cool_user' }
   its('group') { should eq 'cool_group' }
 end
 
-describe file('/opt/tomcat_dirworld_8_0_43/LICENSE') do
+describe file('/opt/tomcat_dirworld_8_0_47/LICENSE') do
   it { should be_file }
   it { should be_owned_by 'cool_user' }
   its('group') { should eq 'cool_group' }
@@ -51,6 +59,7 @@ end
 %w(cool_user tomcat_docs).each do |user_name|
   describe user(user_name) do
     it { should exist }
+    its('shell') { should eq '/bin/false' }
   end
 end
 
